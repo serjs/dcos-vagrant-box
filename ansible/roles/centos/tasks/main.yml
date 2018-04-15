@@ -4,11 +4,16 @@
 # So just disable kdump (bonus: frees up active memory).
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/s2-kdump-configuration-cli.html
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Kernel_Crash_Dump_Guide/sect-kdump-config-cli.html
+- name: Check if Kdump Exists
+  stat: path=/etc/init.d/kdump
+  register: kdump_status
+
 - name: Disable kdump
   service:
     name: kdump
     state: stopped
     enabled: no
+  when: kdump_status.stat.exists
 
 - name: Configure SSH daemon
   lineinfile:
